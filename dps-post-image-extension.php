@@ -34,25 +34,25 @@
   * @return $output string, the modified markup for an individual post
   */
 function be_dps_post_image( $output, $atts, $image, $title, $date, $excerpt, $inner_wrapper, $content, $class ) {
-  // Only want first image
-  $index = 0
+  if ( empty($image) ) {
 
-  // Borrowed from https://gist.github.com/billerickson/c1cc27e6db199298b194a551d1cb1184
-  if (!$image) {
-    $image_ids = array_keys(
-  		get_children(
-  			array(
-  				'post_parent'    => $post_id ? $post_id : get_the_ID(),
-  				'post_type'	     => 'attachment',
-  				'post_mime_type' => 'image',
-  				'orderby'        => 'menu_order',
-  				'order'	         => 'ASC',
-  			)
-  		)
-  	);
-    if ( isset( $image_ids[ $index ] ) ) {
-      $image =  $image_ids[ $index ];
+    /**
+    * Depends on Get the Image Plugin
+    * I didn't want to reinvent the wheel and even though I dont use most of the
+    * supported functionality, this was the simpler path.
+    */
+    if ( function_exists( 'get_the_image' ) ) {
+      $image = get_the_image( array(
+        'post_id' => get_the_ID(),
+        'meta_key' => 'thumbnail',
+        'scan'  => true,
+        'size' => 'medium',
+        'width' => '200',
+        'height' => '200',
+        'echo'  => false
+      ));
     }
+
   }
 
   // Update output with new (or existing) image
@@ -62,5 +62,4 @@ function be_dps_post_image( $output, $atts, $image, $title, $date, $excerpt, $in
 }
 
 add_filter( 'display_posts_shortcode_output', 'be_dps_post_image', 10, 9 );
-
 ?>
