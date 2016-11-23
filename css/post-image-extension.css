@@ -1,0 +1,16 @@
+.dps-thumbnail > .thumbnail {
+  border: 1px solid #ddd;
+  position:relative;
+  padding: 4px;
+}
+
+.dps-thumbnail p {
+  position: absolute;
+  bottom: 0px;
+  padding: 5px 10px 5px 10px;
+  margin: 0px 4px 4px 0px;
+  /* styling bellow */
+  background-color: white;
+  opacity:0.8; /* transparency */
+  filter:alpha(opacity=60); /* IE transparency */
+}

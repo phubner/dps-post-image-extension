@@ -3,7 +3,7 @@
  * Plugin Name: Post Image Extension for Display Posts Shortcode
  * Plugin URI: https://github.com/phubner/dps-post-image-extension
  * Description: Display featured image or first image [display-posts columns="2"]
- * Version: 1.0.0
+ * Version: 1.0.2
  * Author: Peter Hubner
  * Author URI: http://hubnerdev.com
  *
@@ -15,7 +15,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
  * @package DPS Post Image Extension
- * @version 1.0.0
+ * @version 1.0.2
  * @author Peter Hubner
  * @copyright Copyright (c) 2016, Peter Hubner
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -34,32 +34,44 @@
   * @return $output string, the modified markup for an individual post
   */
 function be_dps_post_image( $output, $atts, $image, $title, $date, $excerpt, $inner_wrapper, $content, $class ) {
+
+  // If the featured image exists, use it
+  $image = get_the_post_thumbnail();
+
+  // Otherwise find the first image in the post
   if ( empty($image) ) {
 
-    /**
-    * Depends on Get the Image Plugin
-    * I didn't want to reinvent the wheel and even though I dont use most of the
-    * supported functionality, this was the simpler path.
-    */
-    if ( function_exists( 'get_the_image' ) ) {
-      $image = get_the_image( array(
-        'post_id' => get_the_ID(),
-        'meta_key' => 'thumbnail',
-        'scan'  => true,
-        'size' => 'medium',
-        'width' => '200',
-        'height' => '200',
-        'echo'  => false
-      ));
-    }
-
+    $first_img = '';
+    $output = preg_match_all('|<img.*?src=[\'"](.*?)[\'"].*?>|i', get_the_content(), $matches);
+    $first_img = $matches[1][0];
+    $image = '<img src="' . $first_img . '">';
   }
 
+  $class = array ( 'span4', 'dps-thumbnail');
+
   // Update output with new (or existing) image
-	$output = '<' . $inner_wrapper . ' class="' . implode( ' ', $class ) . '">' . $image . $title . $date . $excerpt . $content . '</' . $inner_wrapper . '>';
+	$output =
+  '<' . $inner_wrapper . ' class="' . implode( ' ', $class ) . '">
+    <div class="thumbnail">' .
+      '<a href="' . get_the_guid() . '">' .
+        $image .
+          '<p>' . get_the_title() . '</p>' .
+        '</a>' .
+    '</div>' .
+  '</' . $inner_wrapper . '>';
 
 	return $output;
 }
 
 add_filter( 'display_posts_shortcode_output', 'be_dps_post_image', 10, 9 );
+
+/**
+ * Post Image Output css
+ *
+ */
+function post_image_extension_class_styles() {
+		wp_enqueue_style( 'dps-columns', plugins_url( 'css/post-image-extension.css', __FILE__ ) );
+}
+add_action( 'wp_enqueue_scripts', 'post_image_extension_class_styles' );
+
 ?>
