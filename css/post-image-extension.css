@@ -1,3 +1,7 @@
+.thumbnails {
+  margin-left: -20px;
+}
+
 .dps-thumbnail {
   height: 400px;
 }
@@ -20,4 +24,21 @@
   /*filter:alpha(opacity=60); /* IE transparency */
   font-family: Roboto;
   color: #525252;
+}
+
+@media (max-width: 767px) {
+  .thumbnails {
+    margin-left: 0;
+    padding-left: 0px;
+  }
+
+  .dps-thumbnail {
+    height: auto;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .dps-thumbnail {
+    height: auto;
+  }
 }
